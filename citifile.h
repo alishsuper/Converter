@@ -13,7 +13,6 @@ class CitiFile
 {
 private:
     Functions f;
-    SNP snp;
     QFile file_in;
     QFile file_out;
     QVector<QString> tempVector;
