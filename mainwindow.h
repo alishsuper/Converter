@@ -28,8 +28,8 @@ private:
     CitiFile citi;
     Functions f;
 
-    QString filein;
-    QString fileout;
+    QString fileIn;
+    QString fileOut;
     QString infoline;
     int flag;
     int flag1;

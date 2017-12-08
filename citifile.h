@@ -18,8 +18,8 @@ private:
     QVector<QString> tempVector;
     QVector<QString> freq;
     QStringList list;
-    int numboffreq;
-    int numbofparam;
+    int numb_of_freq;
+    int numb_of_param;
     int s;//количество s параметров
     int size;
     QString flag_format1;
@@ -27,22 +27,22 @@ private:
 public:
     CitiFile();
     void scanDocument(QString filein);
-    QString gettempVector(int i){
+    QString gettempVector(int i) const{
         return tempVector.value(i);
     }
     void removetempVector(int n){
         tempVector.remove(0,n);
     }
-    QString getfreq(int i){
+    QString getfreq(int i) const{
         return freq.value(i);
     }
     void removefreg(int n){
         freq.remove(0,n);
     }
-    int getnumberofparam(){
+    int getnumberofparam() const{
         return s;
     }
-    void writeDocument(QString fileout, QString flag_format);
+    void writeDocument(QString fileOut, QString flag_format);
 };
 
 #endif // CITIFILE_H
