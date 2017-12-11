@@ -13,9 +13,8 @@ private:
     int flag_freq;
     int flag_port;
     QString flag_param;
-    QString flag_format1;
+    QString flag_format_in;
     int numb_of_freq;
-    int numb_of_param;
     Functions f;
     QFile file_in;
     QFile file_out;
@@ -26,29 +25,29 @@ private:
     QString f_str;//переменные для
     int f_int;    //преобразования
     double f_double; //частот(kHz,MHz,GHz->Hz)
-    void removetempVector(int n){
-        tempVector.remove(0,n);
+    QString gettempVector(int i) const{
+        return tempVector.value(i);
+    }
+    void removetempVector(){
+        tempVector.resize(0);
+    }
+    QString getfreq(int i) const{
+        return freq.value(i);
+    }
+    void removefreg(){
+        freq.resize(0);
     }
 
 public:
     SNP();
     void scanDocument(QString filein);
-    QString gettempVector(int i) const{
-        return tempVector.value(i);
-    }
-    QString getfreq(int i) const{
-        return freq.value(i);
-    }
-    void removefreg(int n){
-        freq.remove(0,n);
-    }
     int getflagnumber() const{
         return 2*flag_port;
     }
     QString getflagformat() const{
-        return flag_format1;
+        return flag_format_in;
     }
-    void writeWithChange(QString filein, QString fileout, QString flag_format2);
+    void writeWithChange(QString filein, QString fileout, QString flag_format_out);
     void writeDocument(QString fileout);
 };
 

@@ -7,13 +7,13 @@
 #include <QtMath>
 
 CitiFile::CitiFile(){
-    numb_of_freq=0; flag_format1="DB";
+    numb_of_freq=0; flag_format_in="DB";
 }
 
 void CitiFile::scanDocument(QString filein)
 {
-    removefreg(numb_of_freq);
-    removetempVector(numb_of_param);
+    removefreg();
+    removetempVector();
 
     //входной файл
     QTextStream in(&file_in);
@@ -35,7 +35,7 @@ void CitiFile::scanDocument(QString filein)
     s=0;
     while (!data_line.contains("BEGIN")){
         if (data_line.contains("DATA")){
-            flag_format1=f.checkForFormat(data_line);
+            flag_format_in=f.checkForFormat(data_line);
             s++;//получили количесто s параметров
         }
         data_line = in.readLine();
@@ -45,36 +45,35 @@ void CitiFile::scanDocument(QString filein)
     }
     in.readLine();//удаляем VAR_LIST_END
     QString s_parameter="";//строка для считывания s параметров
-    numb_of_param=0;
     for (int j=0; j<s; j++){
         s_parameter=in.readLine();
         for (int i=0; i<numb_of_freq; i++){
             s_parameter=in.readLine();//получили s параметры
             list=s_parameter.split(QRegExp(","), QString::SkipEmptyParts);
-            tempVector.push_back(list[0]); numb_of_param++;
-            tempVector.push_back(list[1]); numb_of_param++;
+            tempVector.push_back(list[0]);
+            tempVector.push_back(list[1]);
         }
         s_parameter=in.readLine();//считали END
     }
     file_in.close();
 }
 
-void CitiFile::writeDocument(QString fileOut, QString flag_format2)
+void CitiFile::writeDocument(QString fileOut, QString flag_format_out)
 {
     QTextStream out(&file_out);
     file_out.setFileName(fileOut);
      if (!file_out.open(QIODevice::WriteOnly)) {
          qDebug() << "File don't open!";
      } else {
-         out << "# Hz S "+flag_format2+" R 50\r\n";
+         out << "# Hz S "+flag_format_out+" R 50\r\n";
          int d=sqrt(s);
          for (int i=0; i<numb_of_freq; i++){
              out << getfreq(i)+" ";
              size = getfreq(i).size();
              if (s<9){
                  for (int j=0; j<s; j++){
-                     if (flag_format1.compare(flag_format2, Qt::CaseInsensitive)){
-                         out << f.convertFormat(gettempVector(2*i+j*numb_of_freq*2).toDouble(), gettempVector(2*i+j*numb_of_freq*2+1).toDouble(), flag_format1, flag_format2);
+                     if (flag_format_in.compare(flag_format_out, Qt::CaseInsensitive)){
+                         out << f.convertFormat(gettempVector(2*i+j*numb_of_freq*2).toDouble(), gettempVector(2*i+j*numb_of_freq*2+1).toDouble(), flag_format_in, flag_format_out);
                      }else{
                          out << gettempVector(2*i+j*numb_of_freq*2)+" "+gettempVector(2*i+j*numb_of_freq*2+1)+" ";
                      }

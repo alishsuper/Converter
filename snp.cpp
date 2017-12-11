@@ -7,14 +7,13 @@
 #include <QtMath>
 
 SNP::SNP(){
-    flag_freq=0; flag_param="S"; flag_format1="DB"; flag_port=1;
+    numb_of_freq=0;
+    flag_freq=0; flag_param="S"; flag_format_in="DB"; flag_port=1;
 }
 
 void SNP::scanDocument(QString filein){
-    removefreg(numb_of_freq);
-    removetempVector(numb_of_param);
-    qDebug() << tempVector.size();
-    qDebug() << numb_of_param;
+    removefreg();
+    removetempVector();
 
     QTextStream in(&(file_in));
     file_in.setFileName(filein);
@@ -30,11 +29,10 @@ void SNP::scanDocument(QString filein){
     //check for kind of network parameter
     flag_param = f.checkForParam(infoline);
     //check for format of network parameter
-    flag_format1 = f.checkForFormat(infoline);
+    flag_format_in = f.checkForFormat(infoline);
     //check for number of port
     flag_port = f.checkForPort(filein);
 
-    numb_of_freq=0; numb_of_param=0;
     while(!in.atEnd()){
         infoline = in.readLine();
         list = infoline.split(QRegExp("\\s+"), QString::SkipEmptyParts);
@@ -55,18 +53,14 @@ void SNP::scanDocument(QString filein){
                 }
                 for (int i=1; i<number; i++){
                     tempVector.push_back(list[i]);
-                    numb_of_param++;
                 }
             }else{
                 for (int i=0; i<number; i++){
                     tempVector.push_back(list[i]);
-                    numb_of_param++;
                 }
             }
         }
     }
-    qDebug() << tempVector.size();
-    qDebug() << numb_of_param;
     file_in.close();
 }
 
@@ -104,7 +98,7 @@ void SNP::writeDocument(QString fileout)
 }
 
 //snp->snp
-void SNP::writeWithChange(QString filein, QString fileout, QString flag_format2)
+void SNP::writeWithChange(QString filein, QString fileout, QString flag_format_out)
 {
     QTextStream in(&(file_in));
     file_in.setFileName(filein);
@@ -126,7 +120,7 @@ void SNP::writeWithChange(QString filein, QString fileout, QString flag_format2)
             if(infoline.contains("!")){
                 out << infoline+"\r\n";
             } else if(infoline.contains("#")){
-                infoline.replace(QString(" " + flag_format1), QString(" " + flag_format2), Qt::CaseInsensitive);
+                infoline.replace(QString(" " + flag_format_in), QString(" " + flag_format_out), Qt::CaseInsensitive);
                 out << infoline+"\r\n";
             } else{
                 list=infoline.split(QRegExp("\\s+"), QString::SkipEmptyParts);
@@ -141,7 +135,7 @@ void SNP::writeWithChange(QString filein, QString fileout, QString flag_format2)
                     out << list[0]+" ";
                 }
                 for (int i=z; i<number; i=i+2){
-                    out << f.convertFormat(list[i].toDouble(), list[i+1].toDouble(), flag_format1, flag_format2);
+                    out << f.convertFormat(list[i].toDouble(), list[i+1].toDouble(), flag_format_in, flag_format_out);
                 }
                 out << "\r\n";
             }

@@ -33,7 +33,7 @@ private:
     QString infoline;
     int flag;
     int flag1;
-    QString flag_format2;
+    QString flag_format_out;
 };
 
 #endif // MAINWINDOW_H

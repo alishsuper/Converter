@@ -22,23 +22,23 @@ private:
     int numb_of_param;
     int s;//количество s параметров
     int size;
-    QString flag_format1;
-
-public:
-    CitiFile();
-    void scanDocument(QString filein);
+    QString flag_format_in;
     QString gettempVector(int i) const{
         return tempVector.value(i);
     }
-    void removetempVector(int n){
-        tempVector.remove(0,n);
+    void removetempVector(){
+        tempVector.resize(0);
     }
     QString getfreq(int i) const{
         return freq.value(i);
     }
-    void removefreg(int n){
-        freq.remove(0,n);
+    void removefreg(){
+        freq.resize(0);
     }
+
+public:
+    CitiFile();
+    void scanDocument(QString filein);
     int getnumberofparam() const{
         return s;
     }

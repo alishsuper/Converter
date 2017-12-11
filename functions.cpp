@@ -6,18 +6,13 @@ Functions::Functions()
 {
 }
 
-QString Functions::checkForFormat(QString line)
+QString Functions::checkForFormat(const QString infoline)
 {
-   if(line.contains(" DB", Qt::CaseInsensitive)) {
-        return "DB";
-   } else if(line.contains(" RI", Qt::CaseInsensitive)) {
-        return "RI";
-   } else {
-        return "MA";
-   }
+    QRegExp rx("\\b(MA|DB|RI)\\b", Qt::CaseInsensitive);
+    return ( rx.indexIn( infoline ) != -1 ) ? rx.cap( 1 ).toUpper() : "NONE";
 }
 
-int Functions::checkForFreg(QString infoline)
+int Functions::checkForFreg(const QString infoline)
 {
     if(infoline.contains(" Hz ", Qt::CaseInsensitive)) {
         return 0;
@@ -30,34 +25,23 @@ int Functions::checkForFreg(QString infoline)
     }
 }
 
-QString Functions::checkForParam(QString infoline)
+QString Functions::checkForParam(const QString infoline)
 {
-    if(infoline.contains(" S ", Qt::CaseInsensitive)) {
-        return "S";
-    } else if(infoline.contains(" Y ", Qt::CaseInsensitive)) {
-        return "Y";
-    } else if(infoline.contains(" Z ", Qt::CaseInsensitive)) {
-        return "Z";
-    } else if(infoline.contains(" H ", Qt::CaseInsensitive)) {
-        return "H";
-    } else {
-        return "G";
-    }
+    QRegExp rx("\\b(S|Y|Z|H|G)\\b", Qt::CaseInsensitive);
+    return ( rx.indexIn( infoline ) != -1 ) ? rx.cap( 1 ).toUpper() : "NONE";
 }
 
-int Functions::checkForPort(QString filein)
+int Functions::checkForPort(const QString filein)
 {
-    int flagport;
     if (filein.contains(".s1p")) {
-        flagport = 1;
+        return 1;
     } else if (filein.contains(".s2p")) {
-        flagport = 4;
+        return 4;
     } else if (filein.contains(".s3p")) {
-        flagport = 9;
+        return 9;
     } else {
-        flagport = 16;
+        return 16;
     }
-    return flagport;
 }
 
 int Functions::checkForFileType(QString filename)
@@ -72,6 +56,8 @@ int Functions::checkForFileType(QString filename)
 
 void Functions::writeWithoutChange(QString filein, QString fileout)
 {
+    QFile file_in;
+    QFile file_out;
     QTextStream in(&(file_in));
     QString infoline;
     file_in.setFileName(filein);
@@ -91,33 +77,35 @@ void Functions::writeWithoutChange(QString filein, QString fileout)
     }
 }
 
-QString Functions::convertFormat(double ReState1, double ImState1, QString flag_format1, QString flag_format2)
+QString Functions::convertFormat(double ReState1, double ImState1, QString flag_format_in, QString flag_format_out)
 {
-    if(!flag_format1.compare("DB", Qt::CaseInsensitive) && flag_format2=="MA"){
+    double ReState2=0;
+    double ImState2=0;
+    if(!flag_format_in.compare("DB", Qt::CaseInsensitive) && flag_format_out=="MA"){
         //db->ma
         ReState2=qPow(10, ReState1/20);
         ImState2=ImState1;
-    } else if(!flag_format1.compare("DB", Qt::CaseInsensitive) && flag_format2=="RI"){
+    } else if(!flag_format_in.compare("DB", Qt::CaseInsensitive) && flag_format_out=="RI"){
         //db->ri
         ReState2=qPow(10, ReState1/20)*qCos(ImState1);
         ImState2=qPow(10, ReState1/20)*qSin(ImState1);
     }
 
-    if(!flag_format1.compare("RI", Qt::CaseInsensitive) && flag_format2=="DB"){
+    if(!flag_format_in.compare("RI", Qt::CaseInsensitive) && flag_format_out=="DB"){
         //ri->db
         ReState2=20*log10(qSqrt(qPow(ReState1, 2)+qPow(ImState1, 2)));
         ImState2=qAtan2(ImState1, ReState1);
-    } else if(!flag_format1.compare("RI", Qt::CaseInsensitive) && flag_format2=="MA"){
+    } else if(!flag_format_in.compare("RI", Qt::CaseInsensitive) && flag_format_out=="MA"){
         //ri->ma
         ReState2=(qSqrt(qPow(ReState1, 2)+qPow(ImState1, 2)));
         ImState2=qRadiansToDegrees( qAtan2(ImState1, ReState1));
     }
 
-    if(!flag_format1.compare("MA", Qt::CaseInsensitive) && flag_format2=="DB"){
+    if(!flag_format_in.compare("MA", Qt::CaseInsensitive) && flag_format_out=="DB"){
         //ma->db
         ReState2=20*log10(ReState1);
         ImState2=ImState1;
-    } else if(!flag_format1.compare("MA", Qt::CaseInsensitive) && flag_format2=="RI"){
+    } else if(!flag_format_in.compare("MA", Qt::CaseInsensitive) && flag_format_out=="RI"){
         //ma->ri
         ReState2=ReState1*qCos(qDegreesToRadians(ImState1));
         ImState2=ReState1*qSin(qDegreesToRadians(ImState1));
@@ -137,5 +125,3 @@ QString Functions::checkForNumbParam(int numbofparam)
         return "4p";
     }
 }
-
-

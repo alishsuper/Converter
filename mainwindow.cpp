@@ -38,11 +38,11 @@ void MainWindow::on_saveAs_clicked() {
         fileOut=QFileDialog::getSaveFileName(this,tr("Save File"),"",
                                                       tr("SNP Files (*.s1p *.s2p *.s3p *.s4p);;CITIfiles (*.dat *.cti *.citi *.unc)"));
         if (ui->DB->isChecked()){
-            flag_format2="DB";
+            flag_format_out="DB";
         } else if (ui->MA->isChecked()){
-            flag_format2="MA";
+            flag_format_out="MA";
         } else {
-            flag_format2="RI";
+            flag_format_out="RI";
         }
         if (fileOut != ""){
             flag1=f.checkForFileType(fileOut);
@@ -50,17 +50,17 @@ void MainWindow::on_saveAs_clicked() {
             if (flag==1&&flag1==0) {
                 snp.writeDocument(fileOut);
             //snp->snp с однинаковыми форматами данных
-            } else if (flag==1&&flag1==1&&!flag_format2.compare(snp.getflagformat(), Qt::CaseInsensitive)){
+            } else if (flag==1&&flag1==1&&!flag_format_out.compare(snp.getflagformat(), Qt::CaseInsensitive)){
                 fileOut.replace((fileOut.length()-2),2,f.checkForNumbParam(f.checkForPort(fileIn)));
                 f.writeWithoutChange(fileIn, fileOut);
             //snp->snp с разными форматами данных
-            } else if (flag==1&&flag1==1&&flag_format2.compare(snp.getflagformat(), Qt::CaseInsensitive)){
+            } else if (flag==1&&flag1==1&&flag_format_out.compare(snp.getflagformat(), Qt::CaseInsensitive)){
                 fileOut.replace((fileOut.length()-2),2,f.checkForNumbParam(f.checkForPort(fileIn)));
-                snp.writeWithChange(fileIn, fileOut, flag_format2);
+                snp.writeWithChange(fileIn, fileOut, flag_format_out);
             // citi->snp
             } else if (flag==0&&flag1==1){
                 fileOut.replace((fileOut.length()-2),2,f.checkForNumbParam(citi.getnumberofparam()));
-                citi.writeDocument(fileOut, flag_format2);
+                citi.writeDocument(fileOut, flag_format_out);
             }
         }
     }
